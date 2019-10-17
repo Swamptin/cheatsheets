@@ -1,0 +1,91 @@
+Sed cheat sheet
+
+sed 's/str/repstr/g' file.txt
+cat file | sed s 's///g'
+sed 's/t/T/g' file > new.txt  -> Replace all lowercase t with Uppercase T and
+				put it in a new file.
+
+substitute / this / for that/
+substitute / this / for that/ globally
+
+Delimiters do not need to be / they can be any char, as long as it's
+consistent. 
+	sed 's#t#T#g' file 
+works just like 
+	sed 's/t/T/g/ file 
+Handy if you dealing with directory paths.
+
+^ -> begins with
+$ -> ends with
+
+& is the matched string, so:
+	sed 's/is/*&*/g' file
+		is the same as
+	sed 's/is/*is*/g' file
+Saves you having to type a long string twice.
+
+sed -i -> Edit inline, overwrite the file
+		Without that, the file is untouched and it's just what's being
+		echoed out to the console that is being effected.
+
+sed 's/[0-9]/*/g' file -> Replace all numbers
+sed 's/[^0-9]/*/g' file -> Replace everything but numbers
+    's/[^a-z]/*/g'	Everything but lowercase letters
+    's/[^A-Z]/*/g'      Everything but Uppercase letters.
+    's/[^A-z]/*/g'	Everything but Alphabetic chars (Note: also excludes some punctuation \[])
+    's/[^a-zA-Z ]/*/g'	Everything but Alphabetic letters and spaces.
+    's/[^a-zA-Z\]/*/g'	  	"	"	"	and \
+    's/[0-z/ ]/*/g'	This should grab EVERYTHING
+
+^ means everything but. If you want to make it just those chars, remove the carat.
+If you want to use a regex to include [] do it like [][a-z ] 
+	(ie, open regex, closing square bracket, opening square bracket, close regex.)
+
+
+Making more than one edit across one file/stream
+	sed 's/Twice/None/g;s/Three/Two/g' file.txt
+	sed 's/Twice/None/g;s/Three/Two/g;s/something/else/g' file.txt
+
+The above saves you from having to pipe sed into sed. As long as it's between
+the two ' and separated by a ; it will be treated fine without spinning up a
+separate process.
+
+sed 's/\w*.//' text -> Replace the first word in a line with nothing.
+	\w* Find the first word
+	. include the trailing space aswell
+
+sed 's/\w*$//' text -> Replace the last word in a line with nothing.
+	This will struggle with special characters and numbers.
+
+sed -n -> Silent mode. 
+sed -n 's/T/t/p' text (Run in silent mode, but the p is showing the matching
+			lines. Can be combined with a g for global.)
+sed 's/that/*/Ig' file -> I ignores case.
+
+Get SED to read in commands from a file.
+	In file mysedscript
+		s/T/t/g
+		s/e/E/g
+		s/\w*.//
+	
+	sed -f mysedscript text
+
+Replace a specific word:
+	sed 's/\bnew\b/old/g'
+	\b (bounds) defines the limits of a word. Prevents you from having to define
+each specific instance of a word. (ie: s/old / and s/old$/)
+
+Remove a line based on a string:
+	sed '/new/d' text2 (if you want case insensitive I has to go before d.)
+
+sed '4,$ d' text2 -> display the first 3 lines of a file (like head -n 3 text2)
+		go to line 4, find the end of line character, and delete all
+		the subsequent lines.
+sed '4 q' text2 -> do whatever, until the 4th line and then quit.
+
+sed '!1{/^#/d}' Skip the first line, remove all lines begining with #
+sed '!2{//}' skip the second line. (not two lines, line 2)
+
+sed -n 'p;n' text2 -> prints every other line, starting from line 1.
+sed -n '1!n;d' -> prints every even line (but deletes the other ones when
+		displaying 

@@ -1,0 +1,5 @@
+xss script
+<URL>'%3E%3Calert%28%22hello%22%29%3E
+
+SQL script
+search=1'%20or%203%3D3%20--%20&Submit=Submit

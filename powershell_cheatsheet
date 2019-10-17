@@ -1,0 +1,4 @@
+Measure-Object aliased as measure => wc
+Select-String aliased as sls => grep
+
+https://blogs.technet.microsoft.com/heyscriptingguy/2015/06/11/table-of-basic-powershell-commands/
